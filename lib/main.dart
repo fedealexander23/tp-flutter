@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 void main() {
   runApp(const MyApp());
 }
+
+// WIDGET SIN ESTADO
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -54,8 +57,22 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+// WIDGET CON ESTADO
+
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  int _counter = 3;
+  var _layout=MainAxisAlignment.center;
+
+  void _nextLayout() {
+    setState(() {
+      _layout=_nextEnumLayout(_layout);
+    });
+  }
+
+  MainAxisAlignment _nextEnumLayout(MainAxisAlignment value) {
+    final nextIndex = (value.index + 1) % MainAxisAlignment.values.length;
+    return MainAxisAlignment.values[nextIndex];
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -65,6 +82,31 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
+    });
+  }
+
+  void _incrementCounter2() {
+    setState(() {
+      // This call to setState tells the Flutter framework that something has
+      // changed in this State, which causes it to rerun the build method below
+      // so that the display can reflect the updated values. If we changed
+      // _counter without calling setState(), then the build method would not be
+      // called again, and so nothing would appear to happen.
+      _counter++;
+      _counter++;
+    });
+  }
+
+  void _decrementCounter() {
+    setState(() {
+      // This call to setState tells the Flutter framework that something has
+      // changed in this State, which causes it to rerun the build method below
+      // so that the display can reflect the updated values. If we changed
+      // _counter without calling setState(), then the build method would not be
+      // called again, and so nothing would appear to happen.
+      if (_counter > 0) {
+        _counter--;
+      } 
     });
   }
 
@@ -103,23 +145,47 @@ class _MyHomePageState extends State<MyHomePage> {
           // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
           // action in the IDE, or press "p" in the console), to see the
           // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: _layout,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+            const Text('You have pushed the button this many times:',),
+            Text('$_counter',
+              style: Theme.of(context).textTheme.headlineMedium, ),
+            const Text('Current Layout:', ),
+            Text('$_layout',
+              style: Theme.of(context).textTheme.headlineMedium, ),
+          ]
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      floatingActionButton: SpeedDial(
+        icon: Icons.star,
+        backgroundColor: Colors.blue,
+        children: [
+          SpeedDialChild(
+            child: const Icon(Icons.plus_one,color: Colors.white),
+            label: 'Increment',
+            backgroundColor: Colors.blueAccent,
+            onTap: _incrementCounter,
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.exposure_plus_2,color: Colors.white),
+            label: 'Increment',
+            backgroundColor: Colors.blueAccent,
+            onTap: _incrementCounter2,
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.remove,color: Colors.white),
+            label: 'Decrement',
+            backgroundColor: Colors.blueAccent,
+            onTap: _decrementCounter,
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.layers_outlined,color: Colors.white),
+            label: 'Layout',
+            backgroundColor: Colors.blueAccent,
+            onTap: _nextLayout,
+          ),
+        ] 
+      ),
     );
   }
 }
